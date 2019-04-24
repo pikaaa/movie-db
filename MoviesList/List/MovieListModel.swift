@@ -13,7 +13,7 @@ struct MovieList: Codable {
     var errors: [String]?
 }
 
-struct Movie: Codable{
+struct Movie: Codable, Equatable{
     var vote_average: Float
     var title: String
     var popularity: Float

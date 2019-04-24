@@ -64,15 +64,22 @@ final class MovieListViewController: UIViewController, UICollectionViewDelegate,
     
     //MARK:- Helper methods
     private func fetchMovieList() {
-        let url = URL(string: "https://api.themoviedb.org/3/list/1?page=\(id)&api_key=07fce892533347ccbcac616599c223e5&language=english&sort_by=vote_average.desc")!
+        let url = URL(string: "https://api.themoviedb.org/3/list/\(id)?page=1&api_key=07fce892533347ccbcac616599c223e5&language=english&sort_by=vote_average.desc")!
         
         
         URLSession.shared.dataTask(with: url) { result in
             switch result {
             case .success(_, let data):
                 let list = try! JSONDecoder().decode(MovieList.self, from: data)
-                if list.items?.count ?? 0 > 1{
-                    self.movies = self.movies + list.items!
+                if let list = list.items, !list.isEmpty{
+                    
+                    var uniqueMovies = [Movie]()
+                    for movie in list{
+                        if !self.movies.contains(movie){
+                            uniqueMovies.append(movie)
+                        }
+                    }
+                    self.movies = self.movies + uniqueMovies
                     self.filteredResults = self.movies
                     
                         DispatchQueue.main.sync {
